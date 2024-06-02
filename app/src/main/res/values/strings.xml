@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">profilelookup</string>
+    <string name="nav_header_title">Profile Lookup</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_history">History</string>
+</resources>
