@@ -4,4 +4,9 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_history">History</string>
+
+    <string name="platform_steam">Steam</string>
+    <string name="userid_info">ID пользователя: </string>
+    <string name="realname_info">Имя пользователя: </string>
+    <string name="button_copy">Скопировать ссылку</string>
 </resources>
