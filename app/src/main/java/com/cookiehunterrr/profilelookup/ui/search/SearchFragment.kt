@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.cookiehunterrr.profilelookup.MainActivity
 import com.cookiehunterrr.profilelookup.databinding.FragmentSearchBinding
 
 class SearchFragment : Fragment() {
@@ -27,6 +28,10 @@ class SearchFragment : Fragment() {
         val input = binding.edittextInput
         input.doOnTextChanged { text, start, before, count ->
             searchViewModel.updateTextInInput(text.toString())
+        }
+
+        binding.buttonSearch.setOnClickListener {
+            searchViewModel.tryFindUser(this.activity as MainActivity)
         }
 
         return root

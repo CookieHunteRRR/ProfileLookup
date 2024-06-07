@@ -4,6 +4,7 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_history">History</string>
+    <string name="menu_search">Search</string>
 
     <string name="platform_steam">Steam</string>
     <string name="userid_info">ID пользователя: </string>

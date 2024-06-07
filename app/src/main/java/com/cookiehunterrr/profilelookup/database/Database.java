@@ -1,4 +1,4 @@
-package com.cookiehunterrr.profilelookup;
+package com.cookiehunterrr.profilelookup.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -35,7 +35,7 @@ public class Database extends SQLiteOpenHelper
                 TABLE_NAME_1, COLUMN_USER_ID, COLUMN_USERNAME);
         db.execSQL(query);
 
-        query = String.format("CREATE TABLE %s (%s TEXT PRIMARY KEY, %s TEXT, %s BLOB);",
+        query = String.format("CREATE TABLE %s (%s TEXT PRIMARY KEY, %s TEXT, %s TEXT);",
                 TABLE_NAME_2, COLUMN_USER_ID, COLUMN_AVATAR_HASH, COLUMN_AVATAR);
         db.execSQL(query);
     }
@@ -47,51 +47,73 @@ public class Database extends SQLiteOpenHelper
         onCreate(db);
     }
 
-    public void addUser(String userId, String userName)
+    public void addUser(User user)
     {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query = String.format("SELECT * FROM %s WHERE %s = '%s'",
-                TABLE_NAME_1, COLUMN_USER_ID, userId);
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.getCount() > 0)
+        if (isUserExists(user.getId()))
         {
-            // TODO: Обновить информацию о пользователе
-            cursor.close();
+            // TODO: Обновить информацию если нужно
             return;
         }
-        cursor.close();
+
+        SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
 
-        cv.put(COLUMN_USER_ID, userId);
-        cv.put(COLUMN_USERNAME, userName);
+        cv.put(COLUMN_USER_ID, user.getId());
+        cv.put(COLUMN_USERNAME, user.getName());
 
         long result = db.insert(TABLE_NAME_1, null, cv);
 
         if (result == -1) Toast.makeText(context, "Failed adding user info", Toast.LENGTH_SHORT).show();
     }
 
-    public void addUserAvatarData(String userId, String userAvatarHash, byte[] userAvatar) {
+    public void addUserAvatarData(User user) {
+        if (isUserAvatarExists(user.getId()))
+        {
+            // TODO: Обновить аватар если нужно
+            return;
+        }
+
         SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_USER_ID, user.getId());
+        cv.put(COLUMN_AVATAR_HASH, user.getAvatarHash());
+        cv.put(COLUMN_AVATAR, user.getAvatarLink());
+
+        long result = db.insert(TABLE_NAME_2, null, cv);
+
+        if (result == -1) Toast.makeText(context, "Failed adding user avatar", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isUserExists(String userId)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = String.format("SELECT * FROM %s WHERE %s = '%s'",
+                TABLE_NAME_1, COLUMN_USER_ID, userId);
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.getCount() > 0)
+        {
+            cursor.close();
+            return true;
+        }
+        cursor.close();
+        return false;
+    }
+
+    private boolean isUserAvatarExists(String userId)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
         String query = String.format("SELECT * FROM %s WHERE %s = '%s'",
                 TABLE_NAME_2, COLUMN_USER_ID, userId);
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.getCount() > 0)
         {
-            // TODO: Обновить аватар
             cursor.close();
-            return;
+            return true;
         }
         cursor.close();
-
-        ContentValues cv = new ContentValues();
-
-        cv.put(COLUMN_USER_ID, userId);
-        cv.put(COLUMN_AVATAR_HASH, userAvatarHash);
-        cv.put(COLUMN_AVATAR, userAvatar);
-
-        long result = db.insert(TABLE_NAME_2, null, cv);
-
-        if (result == -1) Toast.makeText(context, "Failed adding user avatar", Toast.LENGTH_SHORT).show();
+        return false;
     }
 }
