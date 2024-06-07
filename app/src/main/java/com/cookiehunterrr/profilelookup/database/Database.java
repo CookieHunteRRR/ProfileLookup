@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -74,29 +75,22 @@ public class Database extends SQLiteOpenHelper
         db.execSQL(query);
     }
 
-    /*@Nullable
-    public DBUser getDBUser(String userId)
+    private void updateUser(User user)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = String.format("SELECT * FROM %s WHERE %s = '%s'",
-                TABLE_NAME, COLUMN_USER_ID, userId);
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.getCount() < 1) return null;
-        cursor.moveToNext();
-
-        return new DBUser(
-                cursor.getString(0),
-                cursor.getString(1),
-                cursor.getString(2),
-                cursor.getString(3)
-        );
-    }*/
+        String query = String.format("UPDATE %s SET %s = '%s', %s = '%s', %s = '%s' WHERE %s = '%s'",
+                TABLE_NAME, COLUMN_USERNAME, user.getName(),
+                COLUMN_AVATAR, user.getAvatarLink(),
+                COLUMN_AVATAR_HASH, user.getAvatarHash(),
+                COLUMN_USER_ID, user.getId());
+        db.execSQL(query);
+    }
 
     public void addUser(User user)
     {
         if (isUserExists(user.getId()))
         {
-            // TODO: Обновить информацию если нужно
+            updateUser(user);
             return;
         }
 
