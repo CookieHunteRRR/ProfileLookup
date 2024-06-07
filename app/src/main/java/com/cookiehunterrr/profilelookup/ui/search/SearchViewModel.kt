@@ -23,9 +23,19 @@ class SearchViewModel : ViewModel() {
         _inputText.value = text
     }
 
-    fun tryFindUser(activity: MainActivity) {
+    fun tryFindUser(activity: MainActivity, userId: String? = null) {
+        var id : String? = null
+        if (userId == null)
+        {
+            id = inputText.value!!
+        }
+        else
+        {
+            id = userId
+        }
+
         // Отправляем запрос в апи
-        getApiResponse(activity, inputText.value!!) {
+        getApiResponse(activity, userId!!) {
             val requestResult = it.getBoolean("success")
             // Если получаем ответ "не существует" - выдаем тост с ошибкой
             if (!requestResult)

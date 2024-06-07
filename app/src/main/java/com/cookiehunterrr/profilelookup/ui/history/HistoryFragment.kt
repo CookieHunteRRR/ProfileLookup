@@ -30,7 +30,7 @@ class HistoryFragment : Fragment()
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        historyAdapter = HistoryAdapter(this.requireContext(), (this.activity as MainActivity).DB)
+        historyAdapter = HistoryAdapter(this.activity as MainActivity, (this.activity as MainActivity).DB)
         binding.recyclerProfiles.adapter = historyAdapter
         binding.recyclerProfiles.layoutManager = LinearLayoutManager(this.requireContext())
 

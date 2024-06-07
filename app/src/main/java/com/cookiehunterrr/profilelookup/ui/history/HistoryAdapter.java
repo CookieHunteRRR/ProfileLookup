@@ -1,6 +1,5 @@
 package com.cookiehunterrr.profilelookup.ui.history;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.cookiehunterrr.profilelookup.MainActivity;
 import com.cookiehunterrr.profilelookup.R;
 import com.cookiehunterrr.profilelookup.database.DBUser;
 import com.cookiehunterrr.profilelookup.database.Database;
@@ -20,13 +20,13 @@ import java.util.ArrayList;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHolder>
 {
-    private Context context;
+    private MainActivity activity;
     private Database db;
     private ArrayList<DBUser> users;
 
-    public HistoryAdapter(Context context, Database db)
+    public HistoryAdapter(MainActivity activity, Database db)
     {
-        this.context = context;
+        this.activity = activity;
         this.db = db;
         this.users = db.getCachedUsers();
     }
@@ -34,7 +34,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(activity);
         View view = inflater.inflate(R.layout.history_recycler_row, parent, false);
         return new MyViewHolder(view);
     }
@@ -51,9 +51,17 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
             }
         });
 
-        Glide.with(context)
+        Glide.with(activity)
                 .load(users.get(position).getAvatarLink())
                 .into(holder.image_avatar);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int currentPosition = holder.getAdapterPosition();
+                activity.requestUserFromHistory(users.get(currentPosition).getId());
+            }
+        });
     }
 
     @Override
