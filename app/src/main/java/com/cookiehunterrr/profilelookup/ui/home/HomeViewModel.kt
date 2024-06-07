@@ -1,13 +1,15 @@
 package com.cookiehunterrr.profilelookup.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.lifecycle.ViewModel
 
-class HomeViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+class HomeViewModel : ViewModel() {
+    fun onCopyButtonClicked(context: Context, url: String) {
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Copied text", url)
+        clipboard!!.setPrimaryClip(clip)
     }
-    val text: LiveData<String> = _text
 }

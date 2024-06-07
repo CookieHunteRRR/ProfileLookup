@@ -16,8 +16,7 @@ public class Database extends SQLiteOpenHelper
     private static final String DATABASE_NAME = "Database.db";
     private static final int DATABASE_VERSION = 1;
 
-    private static final String TABLE_NAME_1 = "cached_user_data";
-    private static final String TABLE_NAME_2 = "cached_user_avatars";
+    private static final String TABLE_NAME = "cached_user_data";
 
     private static final String COLUMN_USER_ID = "user_id";
     private static final String COLUMN_USERNAME = "user_username";
@@ -31,20 +30,34 @@ public class Database extends SQLiteOpenHelper
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = String.format("CREATE TABLE %s (%s TEXT PRIMARY KEY, %s TEXT);",
-                TABLE_NAME_1, COLUMN_USER_ID, COLUMN_USERNAME);
-        db.execSQL(query);
-
-        query = String.format("CREATE TABLE %s (%s TEXT PRIMARY KEY, %s TEXT, %s TEXT);",
-                TABLE_NAME_2, COLUMN_USER_ID, COLUMN_AVATAR_HASH, COLUMN_AVATAR);
+        String query = String.format("CREATE TABLE %s (%s TEXT PRIMARY KEY, %s TEXT, %s TEXT, %s TEXT);",
+                TABLE_NAME, COLUMN_USER_ID, COLUMN_USERNAME, COLUMN_AVATAR, COLUMN_AVATAR_HASH);
         db.execSQL(query);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_1);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_2);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
+    }
+
+    @Nullable
+    public DBUser getDBUser(String userId)
+    {
+        String id;
+        String name;
+        String avatarLink;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = String.format("SELECT * FROM %s WHERE %s = '%s'",
+                TABLE_NAME, COLUMN_USER_ID, userId);
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.getCount() < 1) return null;
+
+        while (cursor.moveToNext())
+        {
+
+        }
     }
 
     public void addUser(User user)
@@ -61,52 +74,19 @@ public class Database extends SQLiteOpenHelper
 
         cv.put(COLUMN_USER_ID, user.getId());
         cv.put(COLUMN_USERNAME, user.getName());
+        cv.put(COLUMN_AVATAR, user.getAvatarLink());
+        cv.put(COLUMN_AVATAR_HASH, user.getAvatarHash());
 
-        long result = db.insert(TABLE_NAME_1, null, cv);
+        long result = db.insert(TABLE_NAME, null, cv);
 
         if (result == -1) Toast.makeText(context, "Failed adding user info", Toast.LENGTH_SHORT).show();
-    }
-
-    public void addUserAvatarData(User user) {
-        if (isUserAvatarExists(user.getId()))
-        {
-            // TODO: Обновить аватар если нужно
-            return;
-        }
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues cv = new ContentValues();
-
-        cv.put(COLUMN_USER_ID, user.getId());
-        cv.put(COLUMN_AVATAR_HASH, user.getAvatarHash());
-        cv.put(COLUMN_AVATAR, user.getAvatarLink());
-
-        long result = db.insert(TABLE_NAME_2, null, cv);
-
-        if (result == -1) Toast.makeText(context, "Failed adding user avatar", Toast.LENGTH_SHORT).show();
     }
 
     private boolean isUserExists(String userId)
     {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = String.format("SELECT * FROM %s WHERE %s = '%s'",
-                TABLE_NAME_1, COLUMN_USER_ID, userId);
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.getCount() > 0)
-        {
-            cursor.close();
-            return true;
-        }
-        cursor.close();
-        return false;
-    }
-
-    private boolean isUserAvatarExists(String userId)
-    {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = String.format("SELECT * FROM %s WHERE %s = '%s'",
-                TABLE_NAME_2, COLUMN_USER_ID, userId);
+                TABLE_NAME, COLUMN_USER_ID, userId);
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.getCount() > 0)
         {

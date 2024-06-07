@@ -16,10 +16,12 @@ import androidx.navigation.ActivityNavigator
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import com.cookiehunterrr.profilelookup.database.Database
+import com.cookiehunterrr.profilelookup.database.User
 import com.cookiehunterrr.profilelookup.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     val DB = Database(this)
+    var currentUser: User? = null
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
