@@ -1,12 +1,10 @@
 package com.cookiehunterrr.profilelookup.ui.home
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -51,7 +49,13 @@ class HomeFragment : Fragment() {
     }
 
     fun updateCurrentUser() {
-        val user = (activity as MainActivity).currentUser!!
+        val user = (activity as MainActivity).currentUser
+        if (user == null)
+        {
+            Toast.makeText(context, "User object bricked", Toast.LENGTH_SHORT).show()
+            navigateToSearch()
+            return
+        }
 
         binding.textUserid.text = user.id
         binding.textUsername.text = user.name
@@ -65,5 +69,9 @@ class HomeFragment : Fragment() {
         Glide.with(this)
             .load(link)
             .into(binding.imageAvatar)
+    }
+
+    fun navigateToSearch() {
+        (this.requireContext() as MainActivity).findNavController(R.id.nav_host_fragment_content_main).navigate(R.id.nav_search)
     }
 }

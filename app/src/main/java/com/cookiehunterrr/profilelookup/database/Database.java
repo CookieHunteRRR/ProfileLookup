@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+
 public class Database extends SQLiteOpenHelper
 {
     private Context context;
@@ -41,24 +43,54 @@ public class Database extends SQLiteOpenHelper
         onCreate(db);
     }
 
-    @Nullable
+    public ArrayList<DBUser> getCachedUsers()
+    {
+        ArrayList<DBUser> users = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = String.format("SELECT * FROM %s",
+                TABLE_NAME, COLUMN_USER_ID);
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.getCount() < 1) return users;
+
+        while (cursor.moveToNext())
+        {
+            users.add(new DBUser(
+                    cursor.getString(0),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3)
+            ));
+        }
+        return users;
+    }
+
+    public void deleteUser(String userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String queryString = "DELETE FROM %s WHERE %s = '%s'";
+
+        String query = String.format(queryString,
+                TABLE_NAME, COLUMN_USER_ID, userId);
+        db.execSQL(query);
+    }
+
+    /*@Nullable
     public DBUser getDBUser(String userId)
     {
-        String id;
-        String name;
-        String avatarLink;
-
         SQLiteDatabase db = this.getReadableDatabase();
         String query = String.format("SELECT * FROM %s WHERE %s = '%s'",
                 TABLE_NAME, COLUMN_USER_ID, userId);
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.getCount() < 1) return null;
+        cursor.moveToNext();
 
-        while (cursor.moveToNext())
-        {
-
-        }
-    }
+        return new DBUser(
+                cursor.getString(0),
+                cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3)
+        );
+    }*/
 
     public void addUser(User user)
     {

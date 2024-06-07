@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.cookiehunterrr.profilelookup.MainActivity
 import com.cookiehunterrr.profilelookup.databinding.FragmentHistoryBinding
 
 class HistoryFragment : Fragment()
 {
     private var _binding: FragmentHistoryBinding? = null
-
+    private lateinit var historyAdapter : HistoryAdapter
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -28,10 +30,10 @@ class HistoryFragment : Fragment()
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        /*val textView: TextView = binding.textHistory
-        historyViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }*/
+        historyAdapter = HistoryAdapter(this.requireContext(), (this.activity as MainActivity).DB)
+        binding.recyclerProfiles.adapter = historyAdapter
+        binding.recyclerProfiles.layoutManager = LinearLayoutManager(this.requireContext())
+
         return root
     }
 

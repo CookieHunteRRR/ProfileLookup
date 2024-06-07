@@ -37,6 +37,11 @@ class SearchFragment : Fragment() {
         return root
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.edittextInput.setText("")
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
