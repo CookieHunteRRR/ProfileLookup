@@ -9,4 +9,5 @@
     <string name="userid_info">ID пользователя: </string>
     <string name="realname_info">Имя пользователя: </string>
     <string name="button_copy">Скопировать ссылку</string>
+    <string name="button_search">Искать</string>
 </resources>
